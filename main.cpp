@@ -1,15 +1,14 @@
 // AVRISP_SIM.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
+#include "WinImpl.h"
 #include "AVRISP.h"
 
 int main()
 {
-    Serial.init("COM7");
+    AVRISP<Win32Serial<7>, SimAVR, Sys> avrisp;
 
-    AVRISP avrisp;
-    Serial.begin(115200);
+    avrisp.begin();
 
     for (;;)
     {

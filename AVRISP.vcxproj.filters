@@ -18,45 +18,21 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="command.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AVRISP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Platform.h">
+    <ClInclude Include="WinImpl.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SimAVR.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Win32Serial.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AVRISP.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Win32Serial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SimAVR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,33 +1,32 @@
-#include "stdafx.h"
-#include "SimAVR.h"
+#include "WinImpl.h"
 
 #define ATTINY85_SIGNATURE       "\x1E\x93\x0B"
 #define ATMEGA328_SIGNATURE      "\x1E\x95\x0F"
 
-bool SimAVR::setDevice(uint8_t* params)
+bool SimAVR::setDevice(const uint8_t* params)
 {
-    DbgPrintf("Set device\n");
+    printf("Set device\n");
 
-    DbgPrintf("devicecode:     %02X\n", params[0]);
-    DbgPrintf("revision:       %02X\n", params[1]);
-    DbgPrintf("progtype:       %02X\n", params[2]);
-    DbgPrintf("parmode:        %02X\n", params[3]);
-    DbgPrintf("polling:        %02X\n", params[4]);
-    DbgPrintf("selftimed:      %02X\n", params[5]);
-    DbgPrintf("lockbytes:      %02X\n", params[6]);
-    DbgPrintf("fusebytes:      %02X\n", params[7]);
-    DbgPrintf("flashpollval1:  %02X\n", params[8]);
-    DbgPrintf("flashpollval2:  %02X\n", params[9]);
-    DbgPrintf("eeprompollval1: %02X\n", params[10]);
-    DbgPrintf("eeprompollval2: %02X\n", params[11]);
-    DbgPrintf("pagesizehigh:   %02X\n", params[12]);
-    DbgPrintf("pagesizelow:    %02X\n", params[13]);
-    DbgPrintf("eepromsizehigh: %02X\n", params[14]);
-    DbgPrintf("eepromsizelow:  %02X\n", params[15]);
-    DbgPrintf("flashsize4:     %02X\n", params[16]);
-    DbgPrintf("flashsize3:     %02X\n", params[17]);
-    DbgPrintf("flashsize2:     %02X\n", params[18]);
-    DbgPrintf("flashsize1:     %02X\n", params[19]);
+    printf("devicecode:     %02X\n", params[0]);
+    printf("revision:       %02X\n", params[1]);
+    printf("progtype:       %02X\n", params[2]);
+    printf("parmode:        %02X\n", params[3]);
+    printf("polling:        %02X\n", params[4]);
+    printf("selftimed:      %02X\n", params[5]);
+    printf("lockbytes:      %02X\n", params[6]);
+    printf("fusebytes:      %02X\n", params[7]);
+    printf("flashpollval1:  %02X\n", params[8]);
+    printf("flashpollval2:  %02X\n", params[9]);
+    printf("eeprompollval1: %02X\n", params[10]);
+    printf("eeprompollval2: %02X\n", params[11]);
+    printf("pagesizehigh:   %02X\n", params[12]);
+    printf("pagesizelow:    %02X\n", params[13]);
+    printf("eepromsizehigh: %02X\n", params[14]);
+    printf("eepromsizelow:  %02X\n", params[15]);
+    printf("flashsize4:     %02X\n", params[16]);
+    printf("flashsize3:     %02X\n", params[17]);
+    printf("flashsize2:     %02X\n", params[18]);
+    printf("flashsize1:     %02X\n", params[19]);
 
     auto pageSize = (params[12] << 8) | params[13];
     auto eepromSize = params[14] << 8 | params[15];
@@ -58,30 +57,33 @@ bool SimAVR::setDevice(uint8_t* params)
     return true;
 }
 
-void SimAVR::reset(bool state)
+bool SimAVR::setDeviceExt(const uint8_t* params)
 {
-    if (_reset != state)
-    {
-        _reset = state;
-
-        if (!_reset)
-        {
-            _pg_en = false;
-        }
-    }
+    return true;
 }
 
-uint32_t SimAVR::xfer(uint32_t data)
+bool SimAVR::start()
+{
+    _reset = true;
+    return true;
+}
+
+void SimAVR::finish()
+{
+    _reset = false;
+}
+
+uint8_t SimAVR::xfer(uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4)
 {
     if (!_reset)
     {
-        return 0xFFFFFFFF;
+        0xFF;
     }
 
+    uint32_t data = (b1 << 24) | (b2 << 16) | (b3 << 8) | b4;
     if (data == 0xAC530000)
     {
-        // program enable
-        _pg_en = true;
+        _reset = true;
     }
     else if (data == 0xAC800000)
     {
@@ -96,7 +98,7 @@ uint32_t SimAVR::xfer(uint32_t data)
     else if ((data & 0xFFFF00FF) == 0x4D000000)
     {
         // load extended address byte
-        DbgPrintf("Load Extended Address byte not supported\n");
+        printf("Load Extended Address byte not supported\n");
         data = 0xFFFFFFFF;
     }
     else if ((data & 0xFF000000) == 0x48000000)
@@ -120,7 +122,7 @@ uint32_t SimAVR::xfer(uint32_t data)
     else if ((data & 0xFFFFFC00) == 0xC1000000)
     {
         // load eeprom memory page
-        DbgPrintf("Load eeprom memory page not supported\n");
+        printf("Load eeprom memory page not supported\n");
         data = 0xFFFFFFFF;
     }
     else if ((data & 0xFF000000) == 0x28000000)
@@ -176,7 +178,7 @@ uint32_t SimAVR::xfer(uint32_t data)
         data &= 0xFFFFFF00;
         data |= _fuses[1];
     }
-    else if ((data & 0xFFFFFF00) == 0x5008000)
+    else if ((data & 0xFFFFFF00) == 0x50080000)
     {
         // read fuse ext bits
         data &= 0xFFFFFF00;
@@ -192,7 +194,7 @@ uint32_t SimAVR::xfer(uint32_t data)
     {
         // write progrm page
         uint16_t addr = ((data >> 8) / _page.size()) * _page.size();
-        DbgPrintf("Programming @%08X\n", addr);
+        printf("Programming @%08X\n", addr);
         memcpy(_flash.data() + addr, _page.data(), _page.size() * sizeof(uint16_t));
     }
     else if ((data & 0xFFFF0000) == 0xC0000000)
@@ -224,11 +226,14 @@ uint32_t SimAVR::xfer(uint32_t data)
     }
     else
     {
-        DbgPrintf("Unsupported SPI instruction: %08X\n", data);
+        printf("Unsupported SPI instruction: %08X\n", data);
         data = 0xFFFFFFFF;
     }
 
-    return data;
+    return (uint8_t)data;
 }
 
-SimAVR AVR;
+uint8_t SimAVR::xfer(uint8_t b1, uint16_t b2b3, uint8_t b4)
+{
+    return xfer(b1, (uint8_t)(b2b3 >> 8), (uint8_t)(b2b3 & 0xFF), b4);
+}
