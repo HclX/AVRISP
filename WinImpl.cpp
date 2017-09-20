@@ -62,13 +62,18 @@ bool SimAVR::setDeviceExt(const uint8_t* params)
     return true;
 }
 
-bool SimAVR::start()
+void SimAVR::begin()
+{
+
+}
+
+bool SimAVR::enter()
 {
     _reset = true;
     return true;
 }
 
-void SimAVR::finish()
+void SimAVR::leave()
 {
     _reset = false;
 }

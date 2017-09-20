@@ -16,8 +16,9 @@ struct NullPort
 
 struct NullAvr
 {
-    bool    start() { return false; }
-    void    finish() {}
+    void    begin() {}
+    bool    enter() { return false; }
+    void    leave() {}
     uint8_t xfer(uint8_t b1, uint16_t b2b3 = 0, uint8_t b4 = 0) { return 0; }
 };
 
@@ -538,7 +539,7 @@ private:
             break;
 
         case Cmnd_STK_ENTER_PROGMODE:     // 0x50  // ' '
-            if (_avr.start())
+            if (_avr.enter())
             {
                 syncOK();
             }
@@ -549,7 +550,7 @@ private:
             break;
 
         case Cmnd_STK_LEAVE_PROGMODE:     // 0x51  // ' '
-            _avr.finish();
+            _avr.leave();
             syncOK();
             break;
 
@@ -720,6 +721,8 @@ private:
     {
         _port.begin(115200);
         _port.discard();
+
+        _avr.begin();
         reset();
     }
 

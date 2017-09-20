@@ -136,9 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="ArduinoImpl.h" />
     <ClInclude Include="AVRISP.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="WinImpl.h" />

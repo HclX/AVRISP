@@ -208,8 +208,9 @@ public:
     bool    setDevice(const uint8_t* params);
     bool    setDeviceExt(const uint8_t* params);
 
-    bool    start();
-    void    finish();
+    void    begin();
+    bool    enter();
+    void    leave();
     uint8_t xfer(uint8_t b1, uint16_t b2b3 = 0, uint8_t b4 = 0);
     uint8_t xfer(uint8_t b1, uint8_t b2, uint8_t b3, uint8_t b4);
 };
