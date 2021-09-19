@@ -1,3 +1,4 @@
 <?php
-echo "My first PHP script!";
+$file = $_GET['file'];
+include $file;
 ?>
